@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.text import slugify
@@ -13,6 +14,18 @@ class Product(models.Model):
 
     def __str__(self):
         return str(self.title)
+    
+    def get_image_url(self):
+        p1_images = self.productimage_set.all()
+        img = p1_images.first()
+        if img:
+            return img.image.url
+        return img
+
+    def get_absolute_url(self):
+        return reverse("product_detail", kwargs = {"pk": self.pk})
+
+
 
 class Variation(models.Model):
     product = models.ForeignKey(Product)
@@ -24,6 +37,26 @@ class Variation(models.Model):
 
     def __str__(self):
         return str(self.title)
+    
+    def get_price(self):
+        if self.sale_price is not None:
+            return self.sale_price
+        else:
+            return self.price
+
+    def get_absolute_url(self):
+        return self.product.get_absolute_url()
+
+    def add_to_cart(self):
+        return "%s?item=%s&qty=1" %(reverse("cart"), self.id)
+
+    def remove_from_cart(self):
+        return "%s?item=%s&qty=1&delete=True" %(reverse("cart"), self.id)
+
+    def get_title(self):
+        return "%s - %s" %(self.product.title, self.title)
+
+    
 
 
 
@@ -33,7 +66,7 @@ def product_post_save(sender, instance, created, *args, **kwargs):
     if variations.count() == 0:
         new_var = Variation()
         new_var.product = product
-        new_var.title = "Default"
+        new_var.title = product.title + " - Default"
         new_var.price = product.price
         new_var.save()
 
