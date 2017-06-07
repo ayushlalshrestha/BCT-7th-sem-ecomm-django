@@ -26,7 +26,6 @@ class Product(models.Model):
         return reverse("product_detail", kwargs = {"pk": self.pk})
 
 
-
 class Variation(models.Model):
     product = models.ForeignKey(Product)
     title = models.CharField(max_length=120)

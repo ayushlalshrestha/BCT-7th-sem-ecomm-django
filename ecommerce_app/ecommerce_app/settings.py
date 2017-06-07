@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'braintree',
     'crispy_forms',
     'products',
     'users',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
