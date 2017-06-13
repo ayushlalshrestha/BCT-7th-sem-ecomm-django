@@ -26,6 +26,10 @@ class UserAddressCreateView(CreateView):
 
     def form_valid(self, form, *args, **kwargs):
         form.instance.user = self.get_checkout_user()
+        print(form.instance.city + " - - - - - - - - - ")
+        order_id = self.request.session.get("order_id")
+        order = Order.objects.get(pk = order_id)
+        #order.shipping_address = form.instance
         return super(UserAddressCreateView, self).form_valid(form, *args, **kwargs)
 
 
@@ -64,7 +68,7 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
                 user_checkout_2 = UserCheckout.objects.get(id=user_check_id)
                 #context["client_token"] = user_checkout_2.get_client_token()
 
-        # if self.get_cart() is not None:
+        # if session cart() is not None:
         context["order"] = self.get_order()
         context["user_can_continue"] = user_can_continue
         context["form"] = self.get_form()

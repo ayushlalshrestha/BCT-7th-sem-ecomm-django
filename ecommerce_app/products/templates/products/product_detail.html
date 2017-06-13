@@ -15,9 +15,9 @@
         <img id='img' class='img-responsive' src='{{ object.get_image_url }}' />
         </div>
     {% endif %}
-
+    <br>
    <p class='lead'>
-        {{ object.description }}
+      {{ object.description }}
    </p>
 </div>
 
@@ -84,11 +84,12 @@
             data: formData,
             success: function(data) {
                alert(data.flash_message);
+               updateCartItemCount();
             },
             error: function(response, error) {
                 // console.log(response)
                 // console.log(error)
-                $("#add-form").submit()
+                $("#add-form").submit();
             }
         })
 
