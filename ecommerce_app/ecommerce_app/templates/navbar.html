@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -28,9 +28,10 @@
           </ul>
         </li>
       </ul>
-      <form class="navbar-form navbar-left">
+      <form action="{% url 'search' %}" method="POST" class="navbar-form navbar-left">
+        {% csrf_token %}
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
+          <input type="text" name="keyword" class="form-control" placeholder="Search" value="{{passed_keyword}}">
         </div>
         <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
       </form>

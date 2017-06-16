@@ -27,7 +27,7 @@
     <p id='jquery-message' class='lead'>  </p>
 
     {% if object.variation_set.count > 1 %}
-        <h3 id='price'>{{ object.variation_set.first.price }}</h3>
+        Price in NRS: <h3 id='price'>{{ object.variation_set.first.price }}</h3>
 
         <select name='item' class='form-control variation_select'>
             {% for vari_obj in object.variation_set.all %}
@@ -38,7 +38,7 @@
 
     {% else %}
 		<input type="hidden" name='item' value='{{ object.variation_set.first.id }}' />
-			<h3 id='price'>
+			Price in NRS: <h3 id='price'>
                 {% if object.variation_set.first.sale_price %}
                     {{ object.variation_set.first.sale_price  }}
                     <small class='og-price'>{{ object.variation_set.first.price }}</small>
@@ -49,9 +49,9 @@
     {% endif %}
     <br/>
     <br/>
-	<input class='form-control' type='number' name='qty' value='1' />
+	<input class='form-control' placeholder="Number of Pieces" type='number' name='qty' value='1' />
     <br/>
-    <input id='submit-btn' type='submit' value='Add to Cart' class='btn btn-warning' />
+    <input id='submit-btn' type='submit' value='Add to Cart +' class='btn btn-warning' />
 
 </form>
 </div>

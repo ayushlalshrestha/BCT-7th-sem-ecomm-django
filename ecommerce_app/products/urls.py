@@ -7,6 +7,7 @@ urlpatterns = [
     #url(r'^$', views.testcontroller , name='testcontroller'),
     url(r'^(?P<pk>\d+)/$', views.ProductDetailView.as_view(), name='product_detail'),
     url(r'^$', views.ProductListView.as_view(), name='products'),
+    url(r'^search$', views.product_search, name='search'),
     #url(r'^(?P<pk>\d+)/$', ProductDetailView.as_view(), name='product_detail'),
 
 ]

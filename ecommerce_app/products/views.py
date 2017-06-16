@@ -3,14 +3,30 @@ from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.utils import timezone
-from .models import Product
+from .models import Product, Variation
 
 
-def testcontroller(request):
+def product_search(request):
+    keyword = request.POST.get("keyword")
+    variation_list = Variation.objects.all()
+    product_list = []
+    for variation in variation_list:
+        #if ((variation.product.title.find(keyword) >= 0) or (variation.product.product_id.find(keyword) != -1) or (variation.product.manufacturer.find(keyword) != -1) or (variation.title.find(keyword) != -1)):
+        if (variation.product.title.find(keyword) != -1 or variation.product.product_id.find(keyword) != -1 or variation.product.manufacturer.find(keyword) != -1 or variation.title.find(keyword) != -1):
+            if not variation.product in product_list:
+                product_list.append(variation.product)
+    if len(product_list) == 0:
+        empty_result = True
+    else:
+        empty_result = False    
     context = {
-        "name": "Ayush Shr",
+        "product_list":  product_list,
+        "passed_keyword":  keyword,
+        "product_list_length": len(product_list),
+        "empty_result": empty_result,
     }
-    return render(request, 'products/products_list.html', context)
+    return render(request, 'products/search_result.html', context)
+    
 
 class ProductDetailView(DetailView):
     model = Product
