@@ -82,8 +82,14 @@ def image_upload_to(instance, filename):
 
 
 class ProductImage(models.Model):
-	product = models.ForeignKey(Product)
-	image = models.ImageField(upload_to = image_upload_to)
-
-	def __str__(self):
-		return self.product.title
+    product = models.ForeignKey(Product)
+    image = models.ImageField(upload_to = image_upload_to)
+    
+    def __str__(self):
+        return self.product.title
+    
+    def get_image_url(self):
+        img = self
+        if img:
+            return img.image.url
+        return img    

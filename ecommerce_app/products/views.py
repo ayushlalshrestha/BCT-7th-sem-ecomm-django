@@ -11,8 +11,10 @@ def product_search(request):
     variation_list = Variation.objects.all()
     product_list = []
     for variation in variation_list:
-        #if ((variation.product.title.find(keyword) >= 0) or (variation.product.product_id.find(keyword) != -1) or (variation.product.manufacturer.find(keyword) != -1) or (variation.title.find(keyword) != -1)):
-        if (variation.product.title.find(keyword) != -1 or variation.product.product_id.find(keyword) != -1 or variation.product.manufacturer.find(keyword) != -1 or variation.title.find(keyword) != -1):
+        variation_str = (variation.product.title + " " + variation.product.product_id + " "  + variation.product.manufacturer +  " "  + variation.title).lower()
+        print(variation_str)
+        #if (variation.product.title.find(keyword) != -1 or variation.product.product_id.find(keyword) != -1 or variation.product.manufacturer.find(keyword) != -1 or variation.title.find(keyword) != -1):
+        if variation_str.find(keyword.lower()) != -1:
             if not variation.product in product_list:
                 product_list.append(variation.product)
     if len(product_list) == 0:

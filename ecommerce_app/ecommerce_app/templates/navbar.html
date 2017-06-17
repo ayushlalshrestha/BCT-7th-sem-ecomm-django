@@ -18,13 +18,13 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Services<span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
+            <li><a href="{% url 'contact' %}">Contact us</a></li>
+            <li><a href="#">About Us</a></li>
             <li><a href="#">Something else here</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="#">Separated link</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
+            <li><a href="#">FAQ</a></li>
           </ul>
         </li>
       </ul>
@@ -49,7 +49,7 @@
 
        {% if not request.user.is_superuser %}
           <li>
-                <a href='{% url "cart" %}'><span class="glyphicon glyphicon-shopping-cart"></span><i class="fa fa-shopping-cart fa-navbar-cart"></i> <span id="cart-count-badge" class='badge'></span></a>
+                <a href='{% url "cart" %}'><span class="glyphicon glyphicon-shopping-cart"></span><span id="cart-count-badge" class='badge'></span></a>
           </li>
        {% endif %}
       {% if not request.user.is_authenticated %}

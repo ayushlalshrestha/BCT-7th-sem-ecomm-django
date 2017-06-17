@@ -7,6 +7,7 @@ from django.shortcuts import render, reverse
 from django.views.generic.base import View
 # from django.views.generic import View
 from .forms import MyRegistrationForm
+from.models import ContactMessage
 
 
 
@@ -56,3 +57,16 @@ def new_user_creation(request):
         }
         return render(request, "users/new_user_register.html", context)
 
+
+def contact_us(request):
+    if request.method == "POST":
+        new_message = ContactMessage()
+        new_message.full_name = request.POST.get("full_name")
+        new_message.email = request.POST.get("email")
+        new_message.address = request.POST.get("address")
+        new_message.contact = request.POST.get("contact_no")
+        new_message.message = request.POST.get("message")
+        new_message.save()
+        return HttpResponseRedirect("/products?message_sent=True")
+    else:
+        return render(request, "users/contact.html")
