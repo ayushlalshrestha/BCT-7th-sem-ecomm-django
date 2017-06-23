@@ -7,7 +7,11 @@ from .models import Product, Variation
 
 
 def product_search(request):
-    keyword = request.POST.get("keyword")
+    if request.method == "POST":
+        keyword = request.POST.get("keyword")
+    else:
+        keyword = request.GET.get("keyword")
+    
     variation_list = Variation.objects.all()
     product_list = []
     for variation in variation_list:

@@ -2,16 +2,7 @@
 {% load i18n %}
 {% load crispy_forms_tags %}
 
-<script>
-  $(document).ready(function(){
-  //var clientToken = "{{ client_token }}";
 
-  //braintree.setup(clientToken, "dropin", {
-  //  container: "payment-form"
-  //});
-
-  })
-</script>
 
 {% block content %}
 
@@ -20,7 +11,7 @@
         <p class='lead'>Continue as Guest</p>
 
         <form method='POST' action=''>{% csrf_token %}
-            {{ form|crispy }}  <br>
+            {{ form.as_p }}  <br>
             <input type='submit' class='btn btn-primary' value='Continue as Guest' />
         </form>
         </div>
@@ -30,7 +21,7 @@
 
 
                <form method='POST' action="{% url 'login' %}"> {% csrf_token %}
-               {{ login_form|crispy }} <br>
+               {{ login_form.as_p }} <br>
 
                <input type='hidden' name='next' value='{{ next_url }}' />
                <input type='submit' class='btn btn-primary' value='Login' />

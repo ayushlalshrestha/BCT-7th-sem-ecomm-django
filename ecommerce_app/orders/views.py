@@ -3,6 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import render, redirect
+from django.views.generic.base import View
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
@@ -10,28 +11,38 @@ from django.views.generic.list import ListView
 
 from .forms import UserAddressForm, GuestCheckoutForm
 from .models import UserAddress, UserCheckout, Order
-from .mixins import CartOrderMixin
+from .mixins import CartOrderMixin, LoginRequiredMixin
 from carts.models import Cart
 
 
-class UserAddressCreateView(CreateView):
+class UserAddressCreateView(CartOrderMixin, CreateView):
     form_class = UserAddressForm
     template_name = "orders/useraddress_create.html"
-    success_url = "checkout/final/"
-
+    
     def get_checkout_user(self):
         user_check_id = self.request.session.get("user_checkout_id")
+        if user_check_id == None:
+            return None
         user_checkout = UserCheckout.objects.get(id=user_check_id)
         return user_checkout
 
+    def get_success_url(self):
+        return reverse("checkout_final")    
+
     def form_valid(self, form, *args, **kwargs):
         form.instance.user = self.get_checkout_user()
-        print(form.instance.city + " - - - - - - - - - ")
-        order_id = self.request.session.get("order_id")
-        order = Order.objects.get(pk = order_id)
-        #order.shipping_address = form.instance
-        return super(UserAddressCreateView, self).form_valid(form, *args, **kwargs)
-
+        if form.instance.user != None:
+            print(form.instance)
+            print(type(form.instance))
+            print(" - - - - - - - - - - - - - - ")
+            new_order = self.get_order()
+            self.request.session["order_pk"] = new_order.pk
+            new_order.user = self.get_checkout_user()
+            form.instance.save()
+            new_order.shipping_address = form.instance
+            new_order.save()
+            return super(UserAddressCreateView, self).form_valid(form, *args, **kwargs)
+        return redirect("checkout")    
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 class CheckoutView(CartOrderMixin, FormMixin, DetailView):
@@ -66,10 +77,7 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
             user_can_continue = True
             if not self.request.user.is_authenticated():  # GUEST USER
                 user_checkout_2 = UserCheckout.objects.get(id=user_check_id)
-                #context["client_token"] = user_checkout_2.get_client_token()
-
-        # if session cart() is not None:
-        context["order"] = self.get_order()
+               #context["client_token"] = user_checkout_2.get_client_token()
         context["user_can_continue"] = user_can_continue
         context["form"] = self.get_form()
         return context
@@ -82,6 +90,7 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
             email = form.cleaned_data.get("email")
             user_checkout, created = UserCheckout.objects.get_or_create(email=email)
             request.session["user_checkout_id"] = user_checkout.id
+            print(" ----------------------   Yes a new Checkout user has been created !!")
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
@@ -94,12 +103,67 @@ class CheckoutView(CartOrderMixin, FormMixin, DetailView):
         cart = self.get_object()
         if cart == None:
             return redirect("cart")
-        new_order = self.get_order()
+        #* new_order = self.get_order()
         user_checkout_id = request.session.get("user_checkout_id")
         if user_checkout_id != None:
             user_checkout = UserCheckout.objects.get(id=user_checkout_id)
-            if new_order.shipping_address == None:
-                return redirect("user_address_create")
-            new_order.user = user_checkout
-            new_order.save()
+            print("------------------------------------------- i am here !!")
+            return redirect("user_address_create")
         return get_data
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+class CheckoutFinalView(CartOrderMixin, View):
+    def post(self, request, *args, **kwargs):
+        order = self.get_order()
+        order_total = order.order_total
+        nonce = request.POST.get("payment_method_nonce")
+        if nonce:
+            result = braintree.Transaction.sale({
+			    "amount": order_total,
+			    "payment_method_nonce": nonce,
+			    "billing": {
+				    "postal_code": "%s" %(order.shipping_address.zipcode),
+				    
+				 },
+			    "options": {
+			        "submit_for_settlement": True
+			    }
+			})
+            if result.is_success:
+                #result.transaction.id to order
+                order.mark_completed(order_id=result.transaction.id)
+                messages.success(request, "Thank you for your order.")
+                del request.session["cart_id"]
+                del request.session["order_id"]
+            else:
+				#messages.success(request, "There was a problem with your order.")
+                messages.success(request, "%s" %(result.message))
+                return redirect("checkout")
+
+        return redirect("order_detail", pk=order.pk)
+
+    def get(self, request, *args, **kwargs):
+        user_check_id = self.request.session.get("user_checkout_id")
+        user_checkout = UserCheckout.objects.get(id=user_check_id)
+        
+        order_pk = self.request.session.get("order_pk")
+        order = Order.objects.get(pk = order_pk)
+        client_token = user_checkout.get_client_token()
+        context = {
+            "order": order,
+            "client_token": client_token,
+        }
+        context["client_token"] = user_checkout.get_client_token()
+        return render(request, "orders/checkout_final.html", context)
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+class OrderList(LoginRequiredMixin, ListView):
+    queryset = Order.objects.all()
+ 
+    def get_queryset(self):
+        user_check_id = self.request.user.id
+        user_checkout = UserCheckout.objects.get(id=user_check_id)
+        return super(OrderList, self).get_queryset().filter(user=user_checkout)

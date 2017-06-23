@@ -56,7 +56,8 @@
 
 <br/>
 <hr/>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
 <p>
     Share<br/>
     <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" rel="shareFB">
@@ -156,7 +157,7 @@
     })
 
     function showFlashMessage(message) {
-            var template = "<div class='container container-alert-flash'>" + 
+            var template = "<div class='container container-alert-flash col-md-12'>" + 
             "<div class='alert alert-success alert-dismissible' role='alert'>" + 
             "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
             "<span aria-hidden='true'>&times;</span></button>" 

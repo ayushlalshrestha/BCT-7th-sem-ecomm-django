@@ -4,13 +4,19 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from carts.views import ItemCountView
+from orders.views import OrderList, CheckoutView, UserAddressCreateView, CheckoutFinalView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', include('products.urls')),
     url(r'^products/', include('products.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^carts/', include('carts.urls')),
     url(r'^cart/count/$', ItemCountView.as_view(), name='item_count'),
+    url(r'^checkout/$', CheckoutView.as_view(), name='checkout'),
+    url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),
+    url(r'^checkout/address/$', UserAddressCreateView.as_view(), name='user_address_create'),
+    url(r'^orders/$', OrderList.as_view(), name='orders'),
 ]
 
 if settings.DEBUG:

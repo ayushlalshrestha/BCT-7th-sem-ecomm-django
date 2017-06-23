@@ -32,8 +32,15 @@ class login(View):
             return HttpResponseRedirect("/products?login_success=True")
         else:
             print("Not Done !!")
-            return HttpResponseRedirect("/users?login_fail=True")
-
+            if self.request.user.is_authenticated:
+                login_status = "LOGGED IN as " + str(self.request.user.first_name)
+            else:
+                login_status = "NOT LOGGED IN"
+            context = {
+                "invalid_login" : "True",
+                "login_status": login_status,
+            }
+            return render(request, "users/login_page.html", context)
 
 def logout(request):
     if request.user:

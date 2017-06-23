@@ -116,7 +116,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+#LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ne'
 
 TIME_ZONE = 'UTC'
 
@@ -140,3 +141,11 @@ STATICFILES_DIRS = (
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root_files')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root_files', 'images')
+
+
+#Braintree Payments Details
+BRAINTREE_PUBLIC = "tz6fx6qn6xzcr53v"
+BRAINTREE_PRIVATE = "94574df3b902eb7b1261dcdf399c956b"
+BRAINTREE_MERCHANT_ID = "vh233v27gywszxrb"
+BRAINTREE_ENVIRONEMNT = "Sandbox"
+
