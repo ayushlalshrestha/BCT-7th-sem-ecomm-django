@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView, FormView
@@ -32,11 +32,12 @@ class UserAddressCreateView(CartOrderMixin, CreateView):
     def form_valid(self, form, *args, **kwargs):
         form.instance.user = self.get_checkout_user()
         if form.instance.user != None:
-            print(form.instance)
+            '''print(form.instance)
             print(type(form.instance))
-            print(" - - - - - - - - - - - - - - ")
+            print(" - - - - - - - - - - - - - - ")'''
             new_order = self.get_order()
             self.request.session["order_pk"] = new_order.pk
+            self.request.session["user_can_pay"] = True
             new_order.user = self.get_checkout_user()
             form.instance.save()
             new_order.shipping_address = form.instance
@@ -144,19 +145,23 @@ class CheckoutFinalView(CartOrderMixin, View):
         return redirect("order_detail", pk=order.pk)
 
     def get(self, request, *args, **kwargs):
-        user_check_id = self.request.session.get("user_checkout_id")
-        user_checkout = UserCheckout.objects.get(id=user_check_id)
-        
-        order_pk = self.request.session.get("order_pk")
-        order = Order.objects.get(pk = order_pk)
-        client_token = user_checkout.get_client_token()
-        context = {
-            "order": order,
-            "client_token": client_token,
-        }
-        context["client_token"] = user_checkout.get_client_token()
-        return render(request, "orders/checkout_final.html", context)
-
+        user_can_pay = self.request.session.get("user_can_pay")
+        if user_can_pay:
+            user_check_id = self.request.session.get("user_checkout_id")
+            user_checkout = UserCheckout.objects.get(id=user_check_id)
+            
+            order_pk = self.request.session.get("order_pk")
+            order = Order.objects.get(pk = order_pk)
+            client_token = user_checkout.get_client_token()
+            context = {
+                "order": order,
+                "client_token": client_token,
+                "user_can_pay": user_can_pay,
+            }
+            context["client_token"] = user_checkout.get_client_token()
+            return render(request, "orders/checkout_final.html", context)
+        else:
+            return render(request, "orders/did_not_belong.html")
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
