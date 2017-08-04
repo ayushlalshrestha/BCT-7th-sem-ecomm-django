@@ -15,7 +15,7 @@ def product_search(request):
     variation_list = Variation.objects.all()
     product_list = []
     for variation in variation_list:
-        variation_str = (variation.product.title + " " + variation.product.product_id + " "  + variation.product.manufacturer +  " "  + variation.title).lower()
+        variation_str = (variation.product.title + " " + variation.product.product_id + " "  + variation.product.manufacturer +  " "  + variation.title + " " + variation.product.category.title).lower()
         print(variation_str)
         #if (variation.product.title.find(keyword) != -1 or variation.product.product_id.find(keyword) != -1 or variation.product.manufacturer.find(keyword) != -1 or variation.title.find(keyword) != -1):
         if variation_str.find(keyword.lower()) != -1:
@@ -40,7 +40,17 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ProductDetailView, self).get_context_data(*args, **kwargs)
-        print(context)
+        product_category = context.get("object").category.title
+        product_sub_category = context.get("object").sub_category
+        print(product_category + " " + product_sub_category )
+        #-------------------  Recommendation ---- 
+        variation_list = Variation.objects.all()
+        similar_items = []
+        for variation in variation_list:
+            if (variation.product.category.title == product_category):
+                if ((not variation.product in similar_items) and (variation.product != context.get("object") )):
+                    similar_items.append(variation.product)
+        context["similar_items"] = similar_items    
         return context
 
 
@@ -54,7 +64,9 @@ class ProductListView(ListView):
             user_status = self.request.user.first_name
         else:
             user_status = "NOT LOGGED IN"
+        most_popular_brands = ["Apple Computers", "Samsung Group", "Microsoft" ,"Lenovo", "HTC"]
         context["user_status"] = user_status
+        context["most_popular_brands"] = most_popular_brands
         return context
 
     

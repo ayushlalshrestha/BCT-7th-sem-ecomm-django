@@ -4,6 +4,21 @@ from django.db.models.signals import post_save
 from django.utils.text import slugify
 
 
+PRODUCT_SUB_CAT = (
+    ('highend', 'Highend'),
+    ('midlevel', 'Midlevel'),
+    ('lowend', 'Lowend'),
+)
+
+
+class Category(models.Model):
+    title = models.CharField(max_length=120, unique=True)
+    description = models.TextField(null=True, blank=True)
+    
+    def __str__(self):
+        return str(self.title)
+    
+
 class Product(models.Model):
     title = models.CharField(max_length = 120)
     product_id = models.CharField(max_length=120, unique=True, null = False, blank = False)
@@ -11,6 +26,9 @@ class Product(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=20)
     active = models.BooleanField(default = True,  verbose_name="Availability ?")
     manufacturer = models.CharField(max_length =120)
+    category = models.ForeignKey(Category, null=True)
+    sub_category = models.CharField(max_length=120, choices=PRODUCT_SUB_CAT, default='highend')
+
 
     def __str__(self):
         return str(self.title)

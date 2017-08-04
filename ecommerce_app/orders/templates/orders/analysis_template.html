@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis{% endblock %}
+
+{% block content %}
+    {% if request.user.is_superuser %}
+        <div class='col-md-7 col-sm-offset-2  '>
+        <strong><h3> Stats !! </h3></strong>
+
+        <div class='container container-alert-flash col-md-10 '>  
+            <div class='alert alert-success alert-dismissible' role='alert'> 
+            Here you will find the various statistics and analysis.
+            </div>
+        </div>  <br>
+        <div class="col-md-10">
+            <strong>Total shop sale in the last 30 days: {{total_sale_last_30}}</strong> </br>
+            <strong>Total shop sale in the last 7 days: {{total_sale_last_7}}</strong> </br>
+            <strong>The Most sold item is : <b><a href="{{ most_sold_product.get_absolute_url }}"> {{ most_sold_product.title }}</a></b></strong>    
+            </br>
+            Products with least popularity: 
+            <ul>
+                {% for lp in not_doing_great %}
+                    <li>{{lp}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+    {%  else %}
+        <div class='container container-alert-flash col-md-7 '>  
+            <div class='alert alert-danger alert-dismissible' role='alert'> 
+                ADMIN credentials required !
+            </div>
+            <a href="{% url 'login' %}">LOGIN</a> as Admin
+      </div>
+    {% endif %} 
+{% endblock %}
+
+
+

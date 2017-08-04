@@ -6,8 +6,6 @@
 
 
 {% block content %}
-    {{ product_list }}
-    {{ product_list_length }}
     <hr>
     <h3>Search Results... .. . </h3>
     
@@ -24,7 +22,7 @@
 			<td>{{product.pk}}</td>
 			<td><a href="{{ product.get_absolute_url }}" > {{product.title}}</a> </td>  
 			<td>{{product.manufacturer}}</td>
-			<td>{{product.description}}</td>
+			<td style = " max-height: 3.6em ">{{product.description}}</td>
 			<td>{{product.price}}</td>
 		</tr>
 		{% endfor %}

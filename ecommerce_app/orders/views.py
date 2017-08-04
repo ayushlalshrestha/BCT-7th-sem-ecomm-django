@@ -170,5 +170,21 @@ class OrderList(LoginRequiredMixin, ListView):
  
     def get_queryset(self):
         user_check_id = self.request.user.id
+        
         user_checkout = UserCheckout.objects.get(id=user_check_id)
+        print(user_checkout)
         return super(OrderList, self).get_queryset().filter(user=user_checkout)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+from products.models import Product
+def business_analysis(request):
+    most_sold_product = Product.objects.get(product_id = 'macbook2017')
+    context = {
+        "most_sold_product" : most_sold_product,
+        "total_sale_last_30": "Nrs. 500570",
+        "total_sale_last_7": "Nrs. 123040",
+        "not_doing_great": ["lenovoy700","asusROG",]  ,
+    }
+    return render(request, 'orders/analysis_template.html', context)

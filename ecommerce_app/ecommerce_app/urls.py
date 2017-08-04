@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from carts.views import ItemCountView
-from orders.views import OrderList, CheckoutView, UserAddressCreateView, CheckoutFinalView
+from orders.views import OrderList, CheckoutView, UserAddressCreateView, CheckoutFinalView, business_analysis
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),
     url(r'^checkout/address/$', UserAddressCreateView.as_view(), name='user_address_create'),
     url(r'^orders/$', OrderList.as_view(), name='orders'),
+    url(r'^analysis/$', business_analysis, name='analysis'),
 ]
 
 if settings.DEBUG:
