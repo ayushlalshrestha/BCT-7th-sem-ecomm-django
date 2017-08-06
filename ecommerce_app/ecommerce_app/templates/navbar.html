@@ -71,6 +71,10 @@
                 <li role="separator" class="divider"></li>
                 <li><a href="{% url 'orders' %}">Orders History</a></li>
             {%  endif %} 
+            {% if request.user.is_superuser %}
+                <li role="separator" class="divider"></li>
+                <li><a href="{% url 'send_offer' %}">Offer Customers (via. Email)</a></li>
+            {%  endif %} 
             <li role="separator" class="divider"></li>
             <li><a href="#">Payment Methods</a></li>
           </ul>

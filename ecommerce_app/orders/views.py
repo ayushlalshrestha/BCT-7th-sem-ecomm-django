@@ -1,14 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormMixin
 from django.views.generic.list import ListView
-
+from django.core.mail import send_mail
 from .forms import UserAddressForm, GuestCheckoutForm
 from .models import UserAddress, UserCheckout, Order
 from .mixins import CartOrderMixin, LoginRequiredMixin
@@ -188,3 +188,49 @@ def business_analysis(request):
         "not_doing_great": ["lenovoy700","asusROG",]  ,
     }
     return render(request, 'orders/analysis_template.html', context)
+
+class send_offer_email(View):
+    def get(self, request):
+        if self.request.user.is_superuser:
+            products = Product.objects.all()
+
+            context = {
+                "name": "AyushLALShrestha",
+                "all_products": products,
+            }
+            return render(request, 'orders/send_offer_template.html', context)
+        else:
+            return render(request, 'orders/did_not_belong.html')
+
+    def post(self, request):
+        if self.request.user.is_superuser:
+            offer_product = self.request.POST.get("product_offer")
+            offer_message_header = self.request.POST.get("offer_message_header")
+            offer_message = self.request.POST.get("offer_message")
+            if (offer_product and offer_message and offer_message_header):
+                all_orders = Order.objects.all()
+                send_to = []
+                for order in all_orders:
+                    #customer_email_id = order.user.email
+                    if order.user:
+                        print(str(order.user.email) + " - - - - - - -")
+                        for cart_item in order.cart.cartitem_set.all():
+                            print(cart_item.item.product.title)
+                            if cart_item.item.product.title == offer_product:
+                                send_to.append(str(order.user.email))                   
+                print("The offer message will be sent to - - - - - - - - - - - - - - -")
+                print(send_to)
+                if send_to is not None:
+                    send_mail(
+                        offer_message_header,
+                        offer_message,
+                        'artifice.tundra@gmail.com',
+                        send_to,
+                        fail_silently = False,
+                    )        
+                    return HttpResponseRedirect("/products?offer_send=True")
+                return HttpResponseRedirect("/products?offer_send=False")
+            else:
+                return HttpResponseRedirect("/products?offer_send=No message")
+        else:
+            return render(request, 'orders/did_not_belong.html')            
