@@ -180,7 +180,7 @@ class OrderList(LoginRequiredMixin, ListView):
 
 from products.models import Product
 def business_analysis(request):
-    most_sold_product = Product.objects.get(product_id = 'macbook2017')
+    most_sold_product = Product.objects.get(product_id = 'macbook-2017')
     context = {
         "most_sold_product" : most_sold_product,
         "total_sale_last_30": "Nrs. 500570",

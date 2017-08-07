@@ -28,6 +28,7 @@ class Product(models.Model):
     manufacturer = models.CharField(max_length =120)
     category = models.ForeignKey(Category, null=True)
     sub_category = models.CharField(max_length=120, choices=PRODUCT_SUB_CAT, default='highend')
+    relatable_keyword = models.CharField(max_length=120, null = True, blank = True,  verbose_name="Keyword to relate")
 
 
     def __str__(self):
@@ -83,7 +84,8 @@ def product_post_save(sender, instance, created, *args, **kwargs):
     if variations.count() == 0:
         new_var = Variation()
         new_var.product = product
-        new_var.title = product.title + " - Default"
+        #new_var.title = product.title + " - Default"
+        new_var.title = str(product.product_id) + " - Default"
         new_var.price = product.price
         new_var.save()
 

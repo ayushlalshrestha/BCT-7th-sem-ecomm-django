@@ -40,7 +40,9 @@
 			Price in NRS: <h3 id='price'>
                 {% if object.variation_set.first.sale_price %}
                     {{ object.variation_set.first.sale_price  }}
-                    <small class='og-price'>{{ object.variation_set.first.price }}</small>
+                    <small>from: </small><small class='og-price'  style="color: #c41306">{{ object.variation_set.first.price }}</small>
+                    <br>
+                    !! ON SALE !!
                 {% else %}
                     {{ object.variation_set.first.price }}
                 {% endif %}

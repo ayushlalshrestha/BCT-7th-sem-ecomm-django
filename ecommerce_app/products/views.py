@@ -42,12 +42,13 @@ class ProductDetailView(DetailView):
         context = super(ProductDetailView, self).get_context_data(*args, **kwargs)
         product_category = context.get("object").category.title
         product_sub_category = context.get("object").sub_category
+        product_relatable_keyword = context.get("object").relatable_keyword
         print(product_category + " " + product_sub_category )
         #-------------------  Recommendation ---- 
         variation_list = Variation.objects.all()
         similar_items = []
         for variation in variation_list:
-            if (variation.product.category.title == product_category):
+            if ((variation.product.category.title == product_category and variation.product.sub_category == product_sub_category) or variation.product.relatable_keyword == product_relatable_keyword):
                 if ((not variation.product in similar_items) and (variation.product != context.get("object") )):
                     similar_items.append(variation.product)
         context["similar_items"] = similar_items    
