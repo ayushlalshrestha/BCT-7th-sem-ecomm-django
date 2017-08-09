@@ -135,34 +135,27 @@
 	.col-xs-3:nth-child(5n+1) { background: #c69; }
 	.col-xs-3:nth-child(5n+2) { background: #9c6; }
 	.col-xs-3:nth-child(5n+3) { background: #69c; }
-    .col-xs-3:nth-child(5n+4) { background: #CC0000; }
+    .col-xs-3:nth-child(5n+4) { background: #e5d22b; }
     .col-xs-3:nth-child(5n+5) { background: #9966FF; }
 	
 </style>
 
-<div style="color: dimgrey">Items similar to {{ object.title }} (This item) </div>
-<div class="container testimonial-group">
-	 
-  <div class="row text-center">
-    {% for sim_prd in similar_items  %}  
-      <div class="col-xs-3"><a href="{{ sim_prd.get_absolute_url }}" target="_blank" style="color: #FFFFFF" >  {{ sim_prd.title}}</a> @  {{ sim_prd.price}}
-        </br>
-      {{ sim_prd.manufacturer}}
-     </div>
-	{% endfor %}
-		
-  </div>
-</div>
+    <div style="color: dimgrey">Items similar to {{ object.title }} (This item) </div>
+        <div class="container testimonial-group">
+            
+        <div class="row text-center">
+                {% for sim_prd in similar_items  %}  
+                <div class="col-xs-3"><a href="{{ sim_prd.get_absolute_url }}" target="_blank" style="color: #FFFFFF" >  {{ sim_prd.title}}</a> @  {{ sim_prd.price}}
+                    </br>
+                {{ sim_prd.manufacturer}}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>   
+    <hr/><br/>
 
-    <hr/>
-
-<!--  End of Carousel   ----------------------------- - - - - - - - -  -->
-<br/>
-<br/>
-<br/>
-
-
-</div>    
+{% include 'recommendation_bar.html' %}
 
 
 

@@ -45,7 +45,7 @@ class login(View):
 def logout(request):
     if request.user:
         auth.logout(request)
-        
+        request.session["recommendation"] = []
     return HttpResponseRedirect("/users?logout_success=True")
 
 

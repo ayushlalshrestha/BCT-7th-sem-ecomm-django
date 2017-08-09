@@ -7,15 +7,15 @@
         <div class='col-md-7 col-sm-offset-2  '>
         <strong><h3> Stats !! </h3></strong>
 
-        <div class='container container-alert-flash col-md-10 '>  
+        <div class='container container-alert-flash col-md-12 '>  
             <div class='alert alert-success alert-dismissible' role='alert'> 
             Here you will find the various statistics and analysis.
             </div>
         </div>  <br>
         <div class="col-md-10">
-            <strong>Total shop sale in the last 30 days: {{total_sale_last_30}}</strong> </br>
-            <strong>Total shop sale in the last 7 days: {{total_sale_last_7}}</strong> </br>
-            <strong>The Most sold item is : <b><a href="{{ most_sold_product.get_absolute_url }}"> {{ most_sold_product.title }}</a></b></strong>    
+            <h4><strong>Total shop sale in the last 30 days: {{total_sale_last_30}}</strong><h4> </br>
+            <h4><strong>Total shop sale in the last 7 days: {{total_sale_last_7}}</strong><h4> </br>
+           <h4> <strong>The Most sold item is : <b><a href="{{ most_sold_product.get_absolute_url }}"> {{ most_sold_product.title }}</a></b></strong> <h4>   
             </br>
             Products with least popularity: 
             <ul>

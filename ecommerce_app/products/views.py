@@ -11,7 +11,7 @@ def product_search(request):
         keyword = request.POST.get("keyword")
     else:
         keyword = request.GET.get("keyword")
-    
+        
     variation_list = Variation.objects.all()
     product_list = []
     for variation in variation_list:
@@ -44,6 +44,7 @@ class ProductDetailView(DetailView):
         product_sub_category = context.get("object").sub_category
         product_relatable_keyword = context.get("object").relatable_keyword
         print(product_category + " " + product_sub_category )
+        
         #-------------------  Recommendation ---- 
         variation_list = Variation.objects.all()
         similar_items = []
@@ -52,6 +53,31 @@ class ProductDetailView(DetailView):
                 if ((not variation.product in similar_items) and (variation.product != context.get("object") )):
                     similar_items.append(variation.product)
         context["similar_items"] = similar_items    
+        
+        #------------------------- Updating Session Recommendation values ------------
+        print(type(self.request.session["recommendation"]))
+        print(self.request.session.get("recommendation"))
+        if len(self.request.session["recommendation"]) != 0 :
+            a = 0
+            for i in self.request.session["recommendation"]:
+                if (product_category == i[0] and product_sub_category == i[1]):
+                    a = 1
+            if a == 0:
+                #self.request.session["recommendation"].append([product_category, product_sub_category])
+                self.request.session["recommendation"] = self.request.session["recommendation"] + [[product_category, product_sub_category]]
+        else:
+            self.request.session["recommendation"] = self.request.session["recommendation"] + [[product_category, product_sub_category]]    
+        print(self.request.session.get("recommendation"))
+        
+        #----------------------------------------- Adding Recommendation ------------------------------------------
+        product_list = Product.objects.all()
+        recommended_products = []
+        for product in product_list:
+            for i in self.request.session["recommendation"]:
+                #print(product.category.title,i[0],product.sub_category,i[1])
+                if (product.category.title == i[0] and product.sub_category == i[1]):
+                    recommended_products.append(product)
+        context["recommended_products"] = recommended_products            
         return context
 
 
@@ -68,6 +94,15 @@ class ProductListView(ListView):
         most_popular_brands = ["Apple Computers", "Samsung Group", "Microsoft" ,"Lenovo", "HTC"]
         context["user_status"] = user_status
         context["most_popular_brands"] = most_popular_brands
+
+        #----------------------------------------- Adding Recommendation ------------------------------------------
+        product_list = Product.objects.all()
+        recommended_products = []
+        for product in product_list:
+            for i in self.request.session["recommendation"]:
+                if (product.category.title == i[0] and product.sub_category == i[1]):
+                    recommended_products.append(product)
+        context["recommended_products"] = recommended_products    
         return context
 
     
