@@ -29,6 +29,7 @@ class login(View):
         user = auth.authenticate(username=username, password=password)
         if user:
             auth.login(request, user)
+            request.session["recommendation"] = []
             return HttpResponseRedirect("/products?login_success=True")
         else:
             print("Not Done !!")
@@ -36,6 +37,7 @@ class login(View):
                 login_status = "LOGGED IN as " + str(self.request.user.first_name)
             else:
                 login_status = "NOT LOGGED IN"
+            
             context = {
                 "invalid_login" : "True",
                 "login_status": login_status,
@@ -78,3 +80,8 @@ def contact_us(request):
         return HttpResponseRedirect("/products?message_sent=True")
     else:
         return render(request, "users/contact.html")
+
+
+    
+def about_us(request):
+    return render(request, "users/about_us.html")
