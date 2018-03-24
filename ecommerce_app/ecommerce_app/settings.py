@@ -25,7 +25,7 @@ SECRET_KEY = '(-lo539m&q0(=n9(fb0jm6ekzz%#q07vfl0r!tgxd#=^#%%#17'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.100.3', '127.0.0.1', '0.0.0.0']
 
 # Password for the Site's root Email:
 EMAIL_HOST = 'smtp.gmail.com'

@@ -16,7 +16,7 @@ def product_search(request):
     product_list = []
     for variation in variation_list:
         variation_str = (variation.product.title + " " + variation.product.product_id + " "  + variation.product.manufacturer +  " "  + variation.title + " " + variation.product.category.title).lower()
-        print(variation_str)
+        #print(variation_str)
         #if (variation.product.title.find(keyword) != -1 or variation.product.product_id.find(keyword) != -1 or variation.product.manufacturer.find(keyword) != -1 or variation.title.find(keyword) != -1):
         if variation_str.find(keyword.lower()) != -1:
             if not variation.product in product_list:
@@ -43,7 +43,7 @@ class ProductDetailView(DetailView):
         product_category = context.get("object").category.title
         product_sub_category = context.get("object").sub_category
         product_relatable_keyword = context.get("object").relatable_keyword
-        print(product_category + " " + product_sub_category )
+        #print(product_category + " " + product_sub_category )
         
         #-------------------  Recommendation ---- 
         variation_list = Variation.objects.all()
@@ -94,15 +94,28 @@ class ProductListView(ListView):
         most_popular_brands = ["Apple Computers", "Samsung Group", "Microsoft" ,"Lenovo", "HTC"]
         context["user_status"] = user_status
         context["most_popular_brands"] = most_popular_brands
+        x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = self.request.META.get('REMOTE_ADDR')
+        print("-------- - - - - IP Address of the Request: -----------------------")
+        print(ip)
 
         #----------------------------------------- Adding Recommendation ------------------------------------------
         product_list = Product.objects.all()
         recommended_products = []
-        for product in product_list:
-            for i in self.request.session["recommendation"]:
-                if (product.category.title == i[0] and product.sub_category == i[1]):
-                    recommended_products.append(product)
-        context["recommended_products"] = recommended_products    
+        print("I am Here!!! -------------------------------------------------")
+        try:
+            for product in product_list:
+                for i in self.request.session["recommendation"]:
+                    if (product.category.title == i[0] and product.sub_category == i[1]):
+                        recommended_products.append(product)
+        except Exception as e:
+            print("-------------------------ERROROROROROROR-------------------" + str(e))
+            self.request.session["recommendation"] = []
+        print("I am Here NOWWWWWW!!! -------------------------------------------------")  
+        context["recommended_products"] = recommended_products  
         return context
 
     
