@@ -4,7 +4,15 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.utils import timezone
 from .models import Product, Variation
+from rest_framework import routers, serializers, viewsets, generics
 
+from serializer import ProductsSerializer
+
+class ProductsListAPI(generics.ListCreateAPIView):
+#class ProductsListAPI(viewsets.ModelViewSet): somehow doesn't work, refer to official rest docs
+    queryset = Product.objects.all()
+    serializer_class = ProductsSerializer
+    # permission_classes = (IsAdminUser,)
 
 def product_search(request):
     if request.method == "POST":
@@ -16,7 +24,7 @@ def product_search(request):
     product_list = []
     for variation in variation_list:
         variation_str = (variation.product.title + " " + variation.product.product_id + " "  + variation.product.manufacturer +  " "  + variation.title + " " + variation.product.category.title).lower()
-        print(variation_str)
+        #print(variation_str)
         #if (variation.product.title.find(keyword) != -1 or variation.product.product_id.find(keyword) != -1 or variation.product.manufacturer.find(keyword) != -1 or variation.title.find(keyword) != -1):
         if variation_str.find(keyword.lower()) != -1:
             if not variation.product in product_list:
@@ -33,7 +41,6 @@ def product_search(request):
     }
     return render(request, 'products/search_result.html', context)
     
-
 class ProductDetailView(DetailView):
     model = Product
     #template_name = "<appname>/<modelname>_detail.html"
@@ -80,7 +87,6 @@ class ProductDetailView(DetailView):
         context["recommended_products"] = recommended_products            
         return context
 
-
 class ProductListView(ListView):
     model = Product
     queryset = Product.objects.all()
@@ -95,14 +101,18 @@ class ProductListView(ListView):
         context["user_status"] = user_status
         context["most_popular_brands"] = most_popular_brands
 
-        #----------------------------------------- Adding Recommendation ------------------------------------------
+        #--------- Adding Recommendation ----------------
         product_list = Product.objects.all()
         recommended_products = []
-        for product in product_list:
-            for i in self.request.session["recommendation"]:
-                if (product.category.title == i[0] and product.sub_category == i[1]):
-                    recommended_products.append(product)
-        context["recommended_products"] = recommended_products    
+        try:
+            for product in product_list:
+                for i in self.request.session["recommendation"]:
+                    if (product.category.title == i[0] and product.sub_category == i[1]):
+                        recommended_products.append(product)
+            context["recommended_products"] = recommended_products    
+        except Exception as e:
+            print("- - - - - - - - - - - - - - - - - ")
+            print(e)
         return context
 
     
